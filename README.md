@@ -22,7 +22,7 @@ Prototipo funcional de infiltración y acción sci-fi desarrollado en respuesta 
 ---
 
 ## 🖥️ Versión del Motor
-*   **Unity Editor: v3.22.2 ** 
+*   **Unity Editor: 6000.5.8f1_5cb7df797b7d (Unity 6.5) Revision 6000.5/staging 5cb7df797b7d** 
 *   **Librerías Clave:** 
 
 ---
