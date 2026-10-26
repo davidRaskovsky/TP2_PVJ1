@@ -114,17 +114,17 @@ public class Attack : MonoBehaviour
 
     IEnumerator AttackCooldown()
     {
-        float currentSpeed=0f;
+        float currentspeed=0f;
         if (isPlayer)
         {
-            currentSpeed = pM.Speed;
-            pM.Speed = 0f;
+            currentspeed = pM.speed;
+            pM.speed = 0f;
             canAttack = false;
 
             yield return new WaitForSeconds(cooldownAttack);
 
 
-            pM.Speed = currentSpeed;
+            pM.speed = currentspeed;
             canAttack = true;
         }
 

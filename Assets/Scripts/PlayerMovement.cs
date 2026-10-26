@@ -1,78 +1,56 @@
-using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] private float speed;
+    public float speed = 7f; 
+    public float rotationSpeed = 1f; 
 
-    public float Speed
-    {
-        get { return speed; }
-        set { speed = value; }
-    }
-    
-    [SerializeField] private float jumpForce;
-    [SerializeField] private bool isStop = false;
-    
-    public bool IsStop
-    {
-        get { return isStop; }
-        set { isStop = value; }
-    }
+    [Header("Jump Settings")]
+    public float jumpForce = 6f; 
+    public float groundCheckDistance = 1.1f; 
+    public LayerMask groundLayer; 
 
-    private float moveHorizontal;
-    private float moveVertical;
     private Rigidbody rb;
 
-    [Header("Raycast Settings")]
-    [SerializeField] private bool isGrounded;
-    [SerializeField] private float rayDistance;
-    [SerializeField] private LayerMask groundLayer;
-
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    private void Update()
     {
-        if (isStop) return;
+        if (Input.GetKey(KeyCode.W))
+        {
+            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            transform.Translate(Vector3.forward * -(speed / 6f) * Time.deltaTime);
+        }
 
-        moveHorizontal = Input.GetAxisRaw("Horizontal");
-        moveVertical = Input.GetAxisRaw("Vertical");
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Rotate(Vector3.up * -(rotationSpeed/speed) * Time.deltaTime);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.Rotate(Vector3.up * (rotationSpeed/speed) * Time.deltaTime);
+        }
 
-        CheckGround();
-
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
-    private void FixedUpdate()
+    private bool IsGrounded()
     {
-        if (isStop)
-        {
-            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-            return;
-        }
+        bool hit = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+        
+        Color rayColor = hit ? Color.green : Color.red;
+        Debug.DrawLine(transform.position, transform.position + Vector3.down * groundCheckDistance, rayColor);
 
-        Vector3 movement = (transform.forward * moveVertical + transform.right * moveHorizontal).normalized;
-        rb.linearVelocity = new Vector3(movement.x * speed, rb.linearVelocity.y, movement.z * speed);
-    }
-
-    private void CheckGround()
-    {
-        Vector3 origin = transform.position;
-        isGrounded = Physics.Raycast(origin, Vector3.down, rayDistance, groundLayer);
-
-        Color colorRay = isGrounded ? Color.green : Color.red;
-        Debug.DrawRay(origin, Vector3.down * rayDistance, colorRay);
-    }
-
-    public void RotateCharacter(float rotateY)
-    {
-        transform.rotation = Quaternion.Euler(0f, rotateY, 0f);
+        return hit;
     }
 }
